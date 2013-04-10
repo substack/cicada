@@ -1,11 +1,8 @@
 var path = require('path');
 var EventEmitter = require('events').EventEmitter;
-var spawn = require('child_process').spawn;
-var mkdirp = require('mkdirp');
 
 var inherits = require('inherits');
 var pushover = require('pushover');
-var parseShell = require('shell-quote').parse;
 
 var wrapCommit = require('./lib/commit');
 var runCommand = require('./lib/command');
