@@ -93,7 +93,7 @@ Cicada.prototype.checkout = function (target, cb) {
     function fetch () {
         var cmd = [
             'git', 'fetch',
-            'file://' + self.repos.dirMap(target.repo),
+            'file://' + path.resolve(self.repos.dirMap(target.repo)),
             target.branch,
         ];
         runCommand(cmd, { cwd : dir }, function (err) {
