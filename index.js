@@ -32,48 +32,40 @@ function Cicada (basedir, opts) {
     self.repodir = opts.repodir || path.join(process.cwd(), 'repo');
     
     var workdir = opts.workdir || path.join(process.cwd(), 'work');
-    self.workdir = workdir;
-
-    mkdirp(workdir, function (err) {
-        if (err)
-            return self.emit('error', 'mkdirp(' + workdir + ') failed');
-
-        if (typeof workdir === 'string') {
-            self.workdir = function (target) {
-                return path.join(workdir, target.id);
-            };
+    self.workdir = typeof workdir === 'function'
+        ? workdir
+        : function (target) { return path.join(workdir, target.id) }
+    ;
+    
+    var repos = self.repos = pushover(self.repodir, opts);
+    
+    function accept (name) {
+        return function (ev) {
+            var anyListeners = self.listeners(name).length > 0;
+            self.emit(name, ev);
+            if (!anyListeners) ev.accept();
         }
-        
-        var repos = self.repos = pushover(self.repodir, opts);
-        
-        function accept (name) {
-            return function (ev) {
-                var anyListeners = self.listeners(name).length > 0;
-                self.emit(name, ev);
-                if (!anyListeners) ev.accept();
-            }
-        }
-        repos.on('info', accept('info'));
-        repos.on('fetch', accept('fetch'));
-        repos.on('head', accept('head'));
-        repos.on('tag', accept('tag'));
-        
-        repos.on('push', function (push) {
-            var anyListeners = self.listeners('push').length > 0;
-            push.on('accept', function () {
-                push.on('exit', function (code) {
-                    if (code !== 0) {
-                        return self.emit('error', 'push failed with ' + code);
-                    }
-                    self.checkout(push, function (err, c) {
-                        if (err) self.emit('error', err)
-                        else self.emit('commit', c)
-                    });
+    }
+    repos.on('info', accept('info'));
+    repos.on('fetch', accept('fetch'));
+    repos.on('head', accept('head'));
+    repos.on('tag', accept('tag'));
+    
+    repos.on('push', function (push) {
+        var anyListeners = self.listeners('push').length > 0;
+        push.on('accept', function () {
+            push.on('exit', function (code) {
+                if (code !== 0) {
+                    return self.emit('error', 'push failed with ' + code);
+                }
+                self.checkout(push, function (err, c) {
+                    if (err) self.emit('error', err)
+                    else self.emit('commit', c)
                 });
             });
-            self.emit('push', push);
-            if (!anyListeners) push.accept();
         });
+        self.emit('push', push);
+        if (!anyListeners) push.accept();
     });
 }
 
@@ -85,9 +77,13 @@ Cicada.prototype.checkout = function (target, cb) {
     
     target.id = target.commit + '.' + Date.now();
     var dir = self.workdir(target);
-    init();
+    mkdirp(dir, init);
     
-    function init () {
+    function init (err) {
+        if (err) {
+            return self.emit('error', 'mkdirp(' + workdir + ') failed');
+        }
+        
         runCommand([ 'git', 'init', dir ], function (err) {
             if (err) cb(new Error(err))
             else fetch()
