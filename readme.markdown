@@ -67,6 +67,10 @@ commit object described below.
 
 If `opts` is a string, use `opts + '/repo'` and `opts + '/work'`.
 
+If `opts.basedir` is a string, use `opts.basedir + '/repo'` and `opts.basedir + '/work'`.
+
+If `opts.bare` is `true` the repo will not be checked out into the `workdir` during a push. If not specified `opts.bare` defaults to `false`.
+
 If `cb` is provided, it acts as a listener for the `'commit'` event.
 
 ## ci.handle(req, res)
@@ -82,9 +86,13 @@ The errback `cb(err, commit)` fires with an error or a commit object.
 
 # events
 
-## ci.on('push', function (repo, commit, branch) {})
+## ci.on('push', function (push) {})
 
 Emitted when somebody pushes to the server.
+
+`push` comes from the [`pushover`](https://github.com/substack/pushover#reposonpush-function-push---) module. 
+
+If you implement a `on('push')` handler you must call `push.accept()` inside of it for the push to complete, otherwise the git client will hang on the other end.
 
 ## ci.on('commit', function (commit) {})
 
