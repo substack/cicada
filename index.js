@@ -24,11 +24,14 @@ function Cicada (basedir, opts) {
         opts = basedir;
         basedir = undefined;
     }
+    
+    if (typeof basedir === 'undefined') basedir = opts.basedir;
+    
     if (typeof basedir === 'string') {
         if (!opts.repodir) opts.repodir = basedir + '/repo';
         if (!opts.workdir) opts.workdir = basedir + '/work';
     }
-    
+        
     self.repodir = opts.repodir || path.join(process.cwd(), 'repo');
     
     var workdir = opts.workdir || path.join(process.cwd(), 'work');
@@ -36,6 +39,8 @@ function Cicada (basedir, opts) {
         ? workdir
         : function (target) { return path.join(workdir, target.id) }
     ;
+
+    if (typeof opts.bare === 'undefined') opts.bare = false;
     
     var repos = self.repos = pushover(self.repodir, opts);
     
@@ -53,17 +58,19 @@ function Cicada (basedir, opts) {
     
     repos.on('push', function (push) {
         var anyListeners = self.listeners('push').length > 0;
-        push.on('accept', function () {
-            push.on('exit', function (code) {
-                if (code !== 0) {
-                    return self.emit('error', 'push failed with ' + code);
-                }
-                self.checkout(push, function (err, c) {
-                    if (err) self.emit('error', err)
-                    else self.emit('commit', c)
-                });
-            });
-        });
+        if (!opts.bare) {
+          push.on('accept', function () {
+              push.on('exit', function (code) {
+                  if (code !== 0) {
+                      return self.emit('error', 'push failed with ' + code);
+                  }
+                  self.checkout(push, function (err, c) {
+                      if (err) self.emit('error', err)
+                      else self.emit('commit', c)
+                  });
+              });
+          });
+        }
         self.emit('push', push);
         if (!anyListeners) push.accept();
     });
