@@ -90,7 +90,7 @@ The errback `cb(err, commit)` fires with an error or a commit object.
 
 Emitted when somebody pushes to the server.
 
-`push` comes from the [`pushover`](https://github.com/substack/pushover#reposonpush-function-push---) module. 
+`push` comes from the [`pushover`](https://github.com/substack/pushover#reposonpush-function-push---) module.
 
 If you implement a `on('push')` handler you must call `push.accept()` inside of it for the push to complete, otherwise the git client will hang on the other end.
 
