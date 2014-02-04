@@ -78,9 +78,15 @@ If `cb` is provided, it acts as a listener for the `'commit'` event.
 Handle requests from an http server. This is necessary to make git work over
 http.
 
-## ci.checkout(repo, commit, branch, cb)
+## ci.checkout(target, cb)
 
 Manually check out a commit into the workdir.
+
+The target has these properties:
+
+* target.repo - the local repository
+* target.commit - the full git hash string for the commit to check out
+* target.branch - the branch to check out from
 
 The errback `cb(err, commit)` fires with an error or a commit object.
 
