@@ -14,17 +14,18 @@
         "shell-quote" : "~0.0.1"
     },
     "scripts" : {
-        "test" : "tap test/*.js"
+        "test" : "mocha"
     },
     "devDependencies" : {
         "tap" : "~0.3.3",
-        "comandante" : "~0.0.1"
+        "comandante" : "~0.0.1",
+        "mocha": "^2.2.5"
     },
     "repository" : {
         "type" : "git",
-        "url" : "git://github.com/substack/cicada.git"
+        "url" : "git://github.com/knspriggs/cicada.git"
     },
-    "homepage" : "https://github.com/substack/cicada",
+    "homepage" : "https://github.com/knspriggs/cicada",
     "keywords" : [
         "ci",
         "continuous",
@@ -34,9 +35,7 @@
         "test"
     ],
     "author" : {
-        "name" : "James Halliday",
-        "email" : "mail@substack.net",
-        "url" : "http://substack.net"
+        "name" : "Kristian Spriggs"
     },
     "license" : "MIT"
 }
