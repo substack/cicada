@@ -17,9 +17,8 @@
         "test" : "mocha"
     },
     "devDependencies" : {
-        "tap" : "~0.3.3",
         "comandante" : "~0.0.1",
-        "mocha": "^2.2.5"
+        "mocha": "2.2.5"
     },
     "repository" : {
         "type" : "git",
