@@ -2,7 +2,7 @@
 
 a teeny git-based continuous integration server
 
-[![build status](https://secure.travis-ci.org/substack/cicada.png)](http://travis-ci.org/substack/cicada)
+[![Build Status](https://travis-ci.org/knspriggs/cicada.svg)](https://travis-ci.org/knspriggs/cicada)
 
 # example
 
@@ -27,13 +27,13 @@ server.listen(5255);
 run it
 
 ```
-$ node example/ci.js 
+$ node example/ci.js
 ```
 
 push some code to it:
 
 ```
-$ git push http://localhost:5255/choose.git 
+$ git push http://localhost:5255/choose.git
 To http://localhost:5255/choose.git
    c79cef8..3537c0f  master -> master
 ```
